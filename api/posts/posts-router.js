@@ -110,9 +110,34 @@ router.get("/:id/comments", (req, res) => {
 
 router.delete("/:id", (req, res) => {
   // delete code
+  const { id } = req.params;
+  Posts.remove(id)
+    .then((post) => {
+      res.status(204).json({ message: "post deleted" });
+    })
+    .catch((err) => {
+      res.status(500).json({ error: "The post could not be removed" });
+    });
 });
 
 router.put("/:id", (req, res) => {
+  const { id } = req.params;
+  const { title, contents } = req.body;
+
+  if (!title || !contents) {
+    res.status(400).json({ message: "please provide title and contents" });
+  } else {
+    Posts.update(id, req.body)
+      .then((result) => {
+        console.log(result);
+        res.status(200).json(result);
+      })
+      .catch((err) => {
+        res
+          .status(500)
+          .json({ error: "The post information could not be updated" });
+      });
+  }
   // put code
 });
 
