@@ -15,11 +15,9 @@ router.post("", (req, res) => {
         res.status(201).json(postId);
       })
       .catch((err) => {
-        res
-          .status(500)
-          .json({
-            error: "There was an error while saving the post to the database",
-          });
+        res.status(500).json({
+          error: "There was an error while saving the post to the database",
+        });
       });
   }
 
@@ -27,7 +25,35 @@ router.post("", (req, res) => {
 });
 
 router.post("/:id/comments", (req, res) => {
-  // post code
+  const { text } = req.body;
+
+  if (!text) {
+    res
+      .status(400)
+      .json({ errorMessage: "Please provide text for the comment." });
+  } else {
+    Posts.insertComment(req.body)
+      .then((commentId) => {
+        res.status(201).json(commentId);
+        // returnComment(commentId);
+      })
+      .catch((err) => {
+        res.status(500).json({
+          error: "There was an error while saving the comment to the database",
+        });
+      });
+  }
+  const returnComment = (commentId) => {
+    Posts.findCommentById(commentId)
+      .then((comment) => {
+        res.status(201).json(comment);
+      })
+      .catch((err) => {
+        res
+          .status(404)
+          .json({ error: "can not find the newly added comment by ID" });
+      });
+  };
 });
 
 router.get("", (req, res) => {
