@@ -1,5 +1,8 @@
-const server = require("./api/server");
+require("dotenv").config();
+rver = require("./api/server");
 
-server.listen(8000, () => {
-  console.log("Magic happening on server 8000");
+const PORT = process.env.PORT || 8000;
+
+server.listen(PORT, () => {
+  console.log(`Magic happening on server ${PORT}...`);
 });

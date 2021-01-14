@@ -26,16 +26,19 @@ router.post("", (req, res) => {
 
 router.post("/:id/comments", (req, res) => {
   const { text } = req.body;
+  const { id } = req.params;
 
   if (!text) {
     res
       .status(400)
       .json({ errorMessage: "Please provide text for the comment." });
   } else {
-    Posts.insertComment(req.body)
-      .then((commentId) => {
-        res.status(201).json(commentId);
-        // returnComment(commentId);
+    Posts.insertComment({ text, post_id: id })
+      .then(({ id }) => {
+        return Posts.findCommentById(id);
+      })
+      .then(([comment]) => {
+        res.status(201).json(comment);
       })
       .catch((err) => {
         res.status(500).json({
@@ -43,17 +46,6 @@ router.post("/:id/comments", (req, res) => {
         });
       });
   }
-  const returnComment = (commentId) => {
-    Posts.findCommentById(commentId)
-      .then((comment) => {
-        res.status(201).json(comment);
-      })
-      .catch((err) => {
-        res
-          .status(404)
-          .json({ error: "can not find the newly added comment by ID" });
-      });
-  };
 });
 
 router.get("", (req, res) => {
